@@ -1,0 +1,12 @@
+=========================================================
+                PAGINA: sub01/pw04.txt
+=========================================================
+Este es el archivo pw04.txt ubicado dentro de la
+carpeta sub01.
+
+Hemos accedido exitosamente a una subcarpeta del servidor.
+Puedes visitar el otro archivo de esta carpeta:
+  * <sub01/pw05.txt>
+
+Para regresar al inicio: <index.txt>
+=========================================================

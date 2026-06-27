@@ -1,0 +1,14 @@
+=========================================================
+                    PAGINA: pw02.txt
+=========================================================
+Este es el archivo pw02.txt.
+Muestra de datos formateados.
+
+Estadisticas de Recursos del Sistema (Ejemplo):
+  - Uso de CPU: 12%
+  - Memoria RAM libre: 4096 MB
+  - Procesos activos: 85
+  - Hilos activos: 412
+
+Para regresar al inicio: <index.txt>
+=========================================================

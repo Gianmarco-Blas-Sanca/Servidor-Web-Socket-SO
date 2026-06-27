@@ -1,0 +1,12 @@
+=========================================================
+                    PAGINA: pw06.txt
+=========================================================
+Este es el archivo pw06.txt.
+
+Aqui se habla sobre los Sockets:
+Un socket representa un punto final (endpoint) en una red
+bidireccional de comunicacion. Permite enviar y recibir
+mensajes usando protocolos como TCP y UDP.
+
+Para regresar al inicio: <index.txt>
+=========================================================

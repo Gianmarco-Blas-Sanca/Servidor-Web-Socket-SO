@@ -1,0 +1,12 @@
+=========================================================
+                    PAGINA: pw01.txt
+=========================================================
+Este es el archivo pw01.txt.
+Contiene informacion sobre procesos.
+
+En Sistemas Operativos, un proceso es una instancia de un
+programa en ejecucion. Cada proceso tiene su propio espacio
+de direcciones de memoria.
+
+Para regresar al inicio: <index.txt>
+=========================================================

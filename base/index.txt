@@ -1,0 +1,15 @@
+=========================================================
+      BIENVENIDO AL SERVIDOR WEB DE TEXTO DE SO
+=========================================================
+Hola! Esta es la pagina de inicio (index.txt).
+Navega usando los siguientes enlaces disponibles:
+
+  * <pw01.txt> - Ver informacion del primer archivo.
+  * <pw02.txt> - Demostracion de datos formateados.
+  * <pw03.txt> - Ejemplo de redireccion o mensaje especial.
+  * <pw06.txt> - Pagina de prueba adicional.
+  * <sub01/pw04.txt> - Archivo en un subdirectorio.
+
+Para regresar aqui en cualquier momento, escribe: home
+Para finalizar la conexion, escribe: end o exit
+=========================================================

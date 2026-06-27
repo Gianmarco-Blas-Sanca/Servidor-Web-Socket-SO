@@ -1,0 +1,11 @@
+=========================================================
+                PAGINA: sub01/pw05.txt
+=========================================================
+Este es el archivo pw05.txt ubicado dentro de la
+carpeta sub01.
+
+¡Felicidades! Has completado la simulacion de navegacion.
+Sigue experimentando con otros archivos.
+
+Para regresar al inicio: <index.txt>
+=========================================================

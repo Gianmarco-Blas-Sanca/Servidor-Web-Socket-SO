@@ -1,0 +1,11 @@
+=========================================================
+                    PAGINA: pw03.txt
+=========================================================
+Este es el archivo pw03.txt.
+Demuestra enlaces a subdirectorios.
+
+Para ver contenido avanzado en otra carpeta, sigue este
+enlace: <sub01/pw04.txt>
+
+Para regresar al inicio: <index.txt>
+=========================================================
