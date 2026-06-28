@@ -3,10 +3,10 @@ import socket
 import threading
 
 # Puerto de escucha del servidor
-PORT = 5000
-# IP de escucha del servidor (Modificar aquí para forzar a una interfaz de red específica)
+port = 5000
+# Host de escucha del servidor (Modificar aquí para forzar a una interfaz de red específica)
 # Por defecto "::" escucha en todas las interfaces de red IPv4 e IPv6 activas (Dual-Stack)
-BIND_IP = "::"
+host = "::"
 
 # Directorio base que contiene las páginas (archivos .txt)
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'base'))
@@ -148,12 +148,12 @@ def main():
         
     local_ips = get_local_ips()
     
-    # Resolver BIND_IP para determinar la familia de socket adecuada (IPv4 o IPv6)
+    # Resolver host para determinar la familia de socket adecuada (IPv4 o IPv6)
     try:
-        addr_infos = socket.getaddrinfo(BIND_IP, PORT, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+        addr_infos = socket.getaddrinfo(host, port, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
         af, socktype, proto, canonname, sa = addr_infos[0]
     except Exception as e:
-        print(f"\n[ERROR CRITICO] No se pudo resolver BIND_IP '{BIND_IP}': {str(e)}")
+        print(f"\n[ERROR CRITICO] No se pudo resolver host '{host}': {str(e)}")
         return
         
     # Crear socket de servidor TCP
@@ -162,7 +162,7 @@ def main():
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     # Si es IPv6 y estamos escuchando en comodín (::), desactivamos IPV6_V6ONLY para dual-stack (IPv4/IPv6)
-    if af == socket.AF_INET6 and (BIND_IP == "::" or sa[0] == "::"):
+    if af == socket.AF_INET6 and (host == "::" or sa[0] == "::"):
         try:
             server_socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
         except Exception:
@@ -181,8 +181,8 @@ def main():
         else:
             print("  -> (No se detectaron IPs externas activas)")
         print(f"Dirección IP local (Loopback):         " + ("localhost" if af == socket.AF_INET else "::1"))
-        print(f"Puerto de escucha:                     {PORT}")
-        print(f"Dirección de escucha configurada:      {BIND_IP}")
+        print(f"Puerto de escucha:                     {port}")
+        print(f"Dirección de escucha configurada:      {host}")
         print(f"Directorio de paginas:                 {BASE_DIR}")
         print("Esperando conexiones de clientes...\n")
         print("---------------------------------------------------------")

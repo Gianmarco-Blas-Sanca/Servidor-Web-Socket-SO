@@ -2,10 +2,10 @@ import socket
 import sys
 
 # Puerto por defecto del servidor
-PORT = 5000
-# IP del servidor (Modificar aquí para cambiar la IP de conexión de forma fija, similar al PDF)
-# Dejar en blanco "" para que el programa pregunte por la IP en consola al iniciar.
-SERVER_IP = " 2800:200:ec18:8dc:c10a:a7c0:af83:16c6"
+port = 5000
+# Host del servidor (Modificar aquí para cambiar el host de conexión de forma fija, similar al PDF)
+# Dejar en blanco "" para que el programa pregunte por el host en consola al iniciar.
+host = ""
 
 def clean_input(prompt):
     """Obtiene una entrada limpia y controlada de la terminal."""
@@ -27,21 +27,21 @@ def main():
     print("        NAVEGADOR WEB DE TEXTO DE SISTEMAS OPERATIVOS     ")
     print("=========================================================")
     
-    # Determinar IP del servidor
-    server_ip = SERVER_IP
-    if not server_ip:
-        server_ip = clean_input("Ingrese la IP del Servidor (Presione Enter para ::1): ")
-        if not server_ip:
-            server_ip = '::1'
+    # Determinar host del servidor
+    global_host = host
+    if not global_host:
+        global_host = clean_input("Ingrese el Host del Servidor (Presione Enter para ::1): ")
+        if not global_host:
+            global_host = '::1'
             
     # Limpiar corchetes [...] y espacios si el usuario los incluyó por error (muy común al copiar IPv6)
-    server_ip = server_ip.strip('[] ').strip()
+    global_host = global_host.strip('[] ').strip()
         
-    print(f"\n[SISTEMA] Conectando a [{server_ip}]:{PORT}...")
+    print(f"\n[SISTEMA] Conectando a [{global_host}]:{port}...")
     
-    # Resolver la IP del servidor de forma dinámica para soportar tanto IPv4 como IPv6
+    # Resolver el host del servidor de forma dinámica para soportar tanto IPv4 como IPv6
     try:
-        addr_infos = socket.getaddrinfo(server_ip, PORT, socket.AF_UNSPEC, socket.SOCK_STREAM)
+        addr_infos = socket.getaddrinfo(global_host, port, socket.AF_UNSPEC, socket.SOCK_STREAM)
     except Exception as e:
         print(f"[ERROR] No se pudo resolver la dirección del servidor: {str(e)}")
         sys.exit(1)
@@ -62,7 +62,7 @@ def main():
             continue
             
     if not connected:
-        print(f"[ERROR] No se pudo conectar al servidor en [{server_ip}]:{PORT}. Verifique la IP y que el servidor esté activo.")
+        print(f"[ERROR] No se pudo conectar al servidor en [{global_host}]:{port}. Verifique el host y que el servidor esté activo.")
         sys.exit(1)
         
     print("[SISTEMA] Conexión establecida con éxito.")
