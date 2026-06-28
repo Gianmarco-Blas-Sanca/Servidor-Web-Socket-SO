@@ -5,7 +5,7 @@ import sys
 port = 5000
 # Host del servidor (Modificar aquí para cambiar el host de conexión de forma fija, similar al PDF)
 # Dejar en blanco "" para que el programa pregunte por el host en consola al iniciar.
-host = ""
+host = "2800:200:ede0:d5f:ac40:b31:d98e:ebd0"
 
 def clean_input(prompt):
     """Obtiene una entrada limpia y controlada de la terminal."""
