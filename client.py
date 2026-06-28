@@ -3,6 +3,9 @@ import sys
 
 # Puerto por defecto del servidor
 PORT = 5000
+# IP del servidor (Modificar aquí para cambiar la IP de conexión de forma fija, similar al PDF)
+# Dejar en blanco "" para que el programa pregunte por la IP en consola al iniciar.
+SERVER_IP = " 2800:200:ec18:8dc:c10a:a7c0:af83:16c6"
 
 def clean_input(prompt):
     """Obtiene una entrada limpia y controlada de la terminal."""
@@ -24,21 +27,45 @@ def main():
     print("        NAVEGADOR WEB DE TEXTO DE SISTEMAS OPERATIVOS     ")
     print("=========================================================")
     
-    # Solicitar dirección IP del servidor
-    server_ip = clean_input("Ingrese la IP del Servidor (Presione Enter para ::1): ")
+    # Determinar IP del servidor
+    server_ip = SERVER_IP
     if not server_ip:
-        server_ip = '::1'
+        server_ip = clean_input("Ingrese la IP del Servidor (Presione Enter para ::1): ")
+        if not server_ip:
+            server_ip = '::1'
+            
+    # Limpiar corchetes [...] y espacios si el usuario los incluyó por error (muy común al copiar IPv6)
+    server_ip = server_ip.strip('[] ').strip()
         
     print(f"\n[SISTEMA] Conectando a [{server_ip}]:{PORT}...")
     
-    # Crear socket de cliente (IPv6)
-    client_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+    # Resolver la IP del servidor de forma dinámica para soportar tanto IPv4 como IPv6
     try:
-        client_socket.connect((server_ip, PORT))
-        print("[SISTEMA] Conexión establecida con éxito.")
+        addr_infos = socket.getaddrinfo(server_ip, PORT, socket.AF_UNSPEC, socket.SOCK_STREAM)
     except Exception as e:
-        print(f"[ERROR] No se pudo conectar al servidor: {str(e)}")
+        print(f"[ERROR] No se pudo resolver la dirección del servidor: {str(e)}")
         sys.exit(1)
+        
+    client_socket = None
+    connected = False
+    
+    for res in addr_infos:
+        af, socktype, proto, canonname, sa = res
+        try:
+            client_socket = socket.socket(af, socktype, proto)
+            client_socket.connect(sa)
+            connected = True
+            break
+        except Exception:
+            if client_socket:
+                client_socket.close()
+            continue
+            
+    if not connected:
+        print(f"[ERROR] No se pudo conectar al servidor en [{server_ip}]:{PORT}. Verifique la IP y que el servidor esté activo.")
+        sys.exit(1)
+        
+    print("[SISTEMA] Conexión establecida con éxito.")
         
     # Estado del navegador local
     current_page = "index.txt"

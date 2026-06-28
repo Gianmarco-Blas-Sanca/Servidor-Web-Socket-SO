@@ -4,21 +4,41 @@ import threading
 
 # Puerto de escucha del servidor
 PORT = 5000
+# IP de escucha del servidor (Modificar aquí para forzar a una interfaz de red específica)
+# Por defecto "::" escucha en todas las interfaces de red IPv4 e IPv6 activas (Dual-Stack)
+BIND_IP = "::"
+
 # Directorio base que contiene las páginas (archivos .txt)
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), 'base'))
 
-def get_local_ip():
-    """Obtiene la dirección IPv6 local activa en la máquina."""
-    s = socket.socket(socket.AF_INET6, socket.SOCK_DGRAM)
+def get_local_ips():
+    """Obtiene una lista de todas las direcciones IP (IPv4 e IPv6) activas en la máquina."""
+    ips = []
     try:
-        # Conexión ficticia para determinar la interfaz de red activa en IPv6
-        s.connect(('2001:4860:4860::8888', 1))
-        ip = s.getsockname()[0]
+        hostname = socket.gethostname()
+        addr_infos = socket.getaddrinfo(hostname, None)
+        for res in addr_infos:
+            ip = res[4][0]
+            # Excluir localhost y duplicados
+            if ip not in ['127.0.0.1', '::1', '0.0.0.0'] and ip not in ips:
+                ips.append(ip)
     except Exception:
-        ip = '::1'
-    finally:
-        s.close()
-    return ip
+        pass
+        
+    # Intentar conexión ficticia como fallback para detectar la interfaz de salida activa
+    for family, test_ip in [(socket.AF_INET, '8.8.8.8'), (socket.AF_INET6, '2001:4860:4860::8888')]:
+        s = socket.socket(family, socket.SOCK_DGRAM)
+        try:
+            s.connect((test_ip, 1))
+            ip = s.getsockname()[0]
+            if ip not in ips and ip not in ['127.0.0.1', '::1', '0.0.0.0']:
+                ips.append(ip)
+        except Exception:
+            pass
+        finally:
+            s.close()
+            
+    return ips
 
 def resolve_path_safely(base_dir, relative_path):
     """
@@ -126,22 +146,43 @@ def main():
         os.makedirs(BASE_DIR)
         print(f"[SISTEMA] Se ha creado el directorio base en: {BASE_DIR}")
         
-    local_ip = get_local_ip()
+    local_ips = get_local_ips()
     
-    # Crear socket de servidor TCP (IPv6)
-    server_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+    # Resolver BIND_IP para determinar la familia de socket adecuada (IPv4 o IPv6)
+    try:
+        addr_infos = socket.getaddrinfo(BIND_IP, PORT, socket.AF_UNSPEC, socket.SOCK_STREAM, 0, socket.AI_PASSIVE)
+        af, socktype, proto, canonname, sa = addr_infos[0]
+    except Exception as e:
+        print(f"\n[ERROR CRITICO] No se pudo resolver BIND_IP '{BIND_IP}': {str(e)}")
+        return
+        
+    # Crear socket de servidor TCP
+    server_socket = socket.socket(af, socktype, proto)
     # Permitir reutilizar el puerto inmediatamente después de apagar el servidor
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
+    # Si es IPv6 y estamos escuchando en comodín (::), desactivamos IPV6_V6ONLY para dual-stack (IPv4/IPv6)
+    if af == socket.AF_INET6 and (BIND_IP == "::" or sa[0] == "::"):
+        try:
+            server_socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+        except Exception:
+            pass
+            
     try:
-        server_socket.bind(('::', PORT))
+        server_socket.bind(sa)
         server_socket.listen(5)
         print("=========================================================")
         print("         SERVIDOR WEB DE TEXTO INICIADO CON EXITO         ")
         print("=========================================================")
-        print(f"Dirección IP para conexiones externas: {local_ip}")
-        print(f"Dirección IP local (Loopback):         ::1")
+        print("Direcciones IP del servidor para conexiones externas:")
+        if local_ips:
+            for ip in local_ips:
+                print(f"  -> {ip}")
+        else:
+            print("  -> (No se detectaron IPs externas activas)")
+        print(f"Dirección IP local (Loopback):         " + ("localhost" if af == socket.AF_INET else "::1"))
         print(f"Puerto de escucha:                     {PORT}")
+        print(f"Dirección de escucha configurada:      {BIND_IP}")
         print(f"Directorio de paginas:                 {BASE_DIR}")
         print("Esperando conexiones de clientes...\n")
         print("---------------------------------------------------------")
