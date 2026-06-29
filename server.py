@@ -25,7 +25,7 @@ def resolve_path_safely(base_dir, relative_path):
     Normaliza y resuelve una ruta relativa de forma segura y tolerante a mayúsculas/minúsculas.
     Evita directory traversal al validar que no suba del directorio base.
     """
-    # Reemplazar barras invertidas (estilo Windows) por barras normales
+    
     normalized_rel = relative_path.replace('\\', '/').strip('/')
     parts = normalized_rel.split('/')
     
@@ -74,7 +74,7 @@ def handle_client(client_socket, client_address):
                 
             print(f"[PETICIÓN] Cliente {client_address[0]}:{client_address[1]} solicitó: '{request}'")
             
-            # Procesar el comando (se espera 'GET <ruta>')
+            # Procesar el comando 
             if request.startswith("GET "):
                 filename = request[4:].strip()
                 
@@ -127,10 +127,7 @@ def main():
         print(f"[SISTEMA] Se ha creado el directorio base en: {BASE_DIR}")
         
     local_ip = get_local_ip()
-    
-    # Crear socket de servidor TCP (IPv6)
     server_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-    # Permitir reutilizar el puerto inmediatamente después de apagar el servidor
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
     try:
@@ -148,7 +145,6 @@ def main():
         
         while True:
             client_socket, client_address = server_socket.accept()
-            # Iniciar un nuevo hilo por cada cliente conectado
             client_thread = threading.Thread(
                 target=handle_client, 
                 args=(client_socket, client_address),

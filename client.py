@@ -1,7 +1,6 @@
 import socket
 import sys
 
-# Puerto por defecto del servidor
 PORT = 5000
 
 def clean_input(prompt):
@@ -25,7 +24,7 @@ def main():
     print("=========================================================")
     
     # Solicitar dirección IP del servidor
-    server_ip = clean_input("Ingrese la IP del Servidor (Presione Enter para ::1): ")
+    server_ip = clean_input("Ingrese la IP del Servidor (Presione Enter si essta en la misma computadora del servidor): ")
     if not server_ip:
         server_ip = '::1'
         
@@ -85,7 +84,7 @@ def main():
             request = f"GET {target_page}"
             client_socket.sendall(request.encode('utf-8'))
             
-            # Recibir la respuesta (soporta hasta 4KB de contenido de página)
+            # Recibir la respuesta 
             response = client_socket.recv(4096).decode('utf-8')
             status, content = parse_response(response)
             
